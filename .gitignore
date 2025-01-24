@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
 ################################################################################
 
@@ -7,6 +7,7 @@
 /temp/MvcTodo
 /WindowsFormsApp1
 /MvcMovie
-/MvcTodo/MvcTodo/bin/Debug/net8.0
+/MvcTodo/MvcTodo/bin
 /MvcTodo/MvcTodo/obj
-/MvcTodo/MvcTodoTest/bin/Debug/net8.0
+/MvcTodo/MvcTodoTest/bin
+MvcTodo/MvcTodoTest/obj/
