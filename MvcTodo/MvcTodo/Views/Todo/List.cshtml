@@ -1,0 +1,22 @@
+﻿@using MvcTodo.ViewModels
+@{
+	ViewData["Title"] = "Todo一覧";
+}
+@model IEnumerable<TodoViewModel>
+<div class="table">
+	<div class="table_top_line">
+		<div class="table_top_left left_tab"><a href="#" class="left_button selected">未完</a></div>
+		<div class="table_top_left left_tab"><a href="#" class="right_button not_selected">全て</a></div>
+		<div class="table_top"><a href="#" class="button">新規</a></div>
+	</div>
+	@foreach (var todo in Model)
+	{
+		<div class="table_line">
+			<div class="completed">
+				<a href="#"><img src="images/icon/Checked.svg" width="32" height="32" alt="Checked"/></a>
+			</div>
+			<div class="title"><a href="#">@Html.DisplayFor(model => todo.Title)</a></div>
+			<div class="limit">@Html.DisplayFor(model => todo.LimitDate)</div>
+		</div>
+	}
+</div>
