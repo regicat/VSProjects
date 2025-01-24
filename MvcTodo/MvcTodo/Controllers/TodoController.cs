@@ -15,13 +15,13 @@ namespace MvcTodo.Controllers
 		{
 			//var entities = new TodoService().GetUnCompletedList();
 			var entities = _todoService.GetUnCompletedList();
-			var vm = entities.Select(e => new TodoViewModel
-			{
-				TodoId = e.TodoId,
-				Title = e.Title,
-				LimitDate = e.LimitDate,
-				IsCompleted = e.IsCompleted,
-			});
+			var vm = entities.Select(e => new TodoViewModel(
+				e.TodoId,
+				e.Title,
+				e.Description,
+				e.LimitDate,
+				e.IsCompleted
+			));
 			return View("List", vm); 
 		}
 
@@ -29,15 +29,8 @@ namespace MvcTodo.Controllers
 		{
 			var vm = new List<TodoViewModel>
 			{
-				new TodoViewModel()
-				{
-					Title = "やること１",
-					LimitDate = DateTime.Now,
-				},
-				new TodoViewModel()
-				{
-					Title = "やること２"
-				}
+				new TodoViewModel("やること１", new DateTime(2025,1,31)),
+				new TodoViewModel("やること２"),
 			};
 			return View("List", vm);
 		}
@@ -47,11 +40,8 @@ namespace MvcTodo.Controllers
 			{
 				Debug.Print(id.Value.ToString());
 			}
-			var vm = new TodoViewModel()
-				{
-					Title = "やること１",
-					LimitDate = DateTime.Now,
-				};
+
+			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
 			return View(vm);
 		}
 
@@ -61,11 +51,8 @@ namespace MvcTodo.Controllers
 			{
 				Debug.Print(id.Value.ToString());
 			}
-			var vm = new TodoViewModel()
-			{
-				Title = "やること１",
-				LimitDate = DateTime.Now,
-			};
+			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
+
 			return View("Edit",vm);
 		}
 
@@ -75,17 +62,14 @@ namespace MvcTodo.Controllers
 			{
 				Debug.Print(id.Value.ToString());
 			}
-			var vm = new TodoViewModel()
-			{
-				Title = "やること１",
-				LimitDate = DateTime.Now,
-			};
+			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
+
 			return View("Edit", vm);
 		}
 
 		public IActionResult Add()
 		{
-			return View("Index");
+			return View("List");
 		}
 
 		public IActionResult Check(int? id, string? checkValue, string? listMode)

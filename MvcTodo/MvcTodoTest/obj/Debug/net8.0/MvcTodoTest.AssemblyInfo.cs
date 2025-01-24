@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MvcTodoTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9c0a0baea8d26515c3b8f79cc8a071ebf3eedbd4")]
 [assembly: System.Reflection.AssemblyProductAttribute("MvcTodoTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MvcTodoTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

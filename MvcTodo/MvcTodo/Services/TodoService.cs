@@ -10,15 +10,9 @@ namespace MvcTodo.Services
 		{
 			return new List<Todo>
 			{
-				new()
-				{
-					Title = "やること１",
-					LimitDate = DateTime.Now,
-				},
-				new ()
-				{
-					Title = "やること２"
-				}
+				new Todo("やること１"),
+				new Todo("やること２", new DateTime(2025,1,31)),
+				new Todo(1,"やること３",null,new DateTime(2025,2,1), true),
 			};
 		}
 	}

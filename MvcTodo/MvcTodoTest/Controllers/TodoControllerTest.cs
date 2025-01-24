@@ -22,31 +22,16 @@ namespace MvcTodoTest.Controllers
 			var mock = new Mock<ITodoService>();
 			var entityList = new List<Todo>()
 			{
-				new()
-				{
-					Title = "やること１",
-					LimitDate = new DateTime(2025, 1, 28),
-					
-				},
-				new ()
-				{
-					Title = "やること２"
-				},
-				new ()
-				{
-					Title = "やること３",
-					LimitDate = new DateTime(2025,1,31),
-					IsCompleted = true,
-				}
+				new Todo(1,"やること１","",null,false),
+				new Todo(3,"やること２","",new DateTime(2015,1,31),false),
+				new Todo(2,"やること３","",null,true),
+
 			};
 			mock.Setup(service => service.GetUnCompletedList())
 				.Returns(entityList);
-			var expectedList = entityList.Select(e => new TodoViewModel()
-			{
-				Title = e.Title,
-				LimitDate = e.LimitDate,
-				IsCompleted = e.IsCompleted,
-			}).ToList();
+			var expectedList = entityList
+				.Select(e => new TodoViewModel(e.TodoId, e.Title, e.Description, e.LimitDate, e.IsCompleted))
+				.ToList();
 
 			var controller = new TodoController(mock.Object);
 			var result = controller.Index();
@@ -57,7 +42,6 @@ namespace MvcTodoTest.Controllers
 			var actualModel = actual.Model;
 			Assert.That(actualModel, Is.InstanceOf<IEnumerable<TodoViewModel>>());
 			var actualList = (IEnumerable<TodoViewModel>)actualModel;
-			expectedList[1].Title = "aaa";
 			Assert.That(actualList, Is.EquivalentTo(expectedList));
 		}
 	}
