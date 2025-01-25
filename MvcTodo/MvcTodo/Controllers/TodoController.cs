@@ -15,24 +15,27 @@ namespace MvcTodo.Controllers
 		{
 			//var entities = new TodoService().GetUnCompletedList();
 			var entities = _todoService.GetUnCompletedList();
-			var vm = entities.Select(e => new TodoViewModel(
+			var todoList = entities.Select(e => new TodoViewModel(
 				e.TodoId,
 				e.Title,
 				e.Description,
 				e.LimitDate,
 				e.IsCompleted
 			));
-			return View("List", vm); 
+			return View("List", new TodoListViewModel("未完", todoList)); 
 		}
 
 		public IActionResult All()
 		{
-			var vm = new List<TodoViewModel>
-			{
-				new TodoViewModel("やること１", new DateTime(2025,1,31)),
-				new TodoViewModel("やること２"),
-			};
-			return View("List", vm);
+			var entities = _todoService.GetUnCompletedList();
+			var todoList = entities.Select(e => new TodoViewModel(
+				e.TodoId,
+				e.Title,
+				e.Description,
+				e.LimitDate,
+				e.IsCompleted
+			));
+			return View("List", new TodoListViewModel("全て", todoList));
 		}
 		public IActionResult Edit(int? id)
 		{
