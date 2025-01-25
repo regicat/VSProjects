@@ -13,7 +13,7 @@
 	{
 		<div class="table_line">
 			<div class="completed">
-				<a href="#"><img src="images/icon/Checked.svg" width="32" height="32" alt="Checked"/></a>
+				<a href="#"><img src="~/images/icon/@(todo.IsCompleted ? "Checked" : "NotChecked").svg" width="32" height="32" alt="Checked"/></a>
 			</div>
 			<div class="title"><a href="#">@Html.DisplayFor(model => todo.Title)</a></div>
 			<div class="limit">@Html.DisplayFor(model => todo.LimitDate)</div>

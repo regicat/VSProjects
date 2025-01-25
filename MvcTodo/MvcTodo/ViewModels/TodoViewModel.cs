@@ -1,10 +1,17 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace MvcTodo.ViewModels
 {
-	public record TodoViewModel(int? TodoId, string? Title, string? Description, DateTime? LimitDate, bool IsCompleted)
+	public record TodoViewModel(
+		int? TodoId, 
+		[property: DisplayName("タイトル")] 
+		string? Title, 
+		string? Description,
+		[property: DisplayName("期限"), DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
+		DateTime? LimitDate, 
+		bool IsCompleted)
 	{
-
 		public TodoViewModel(string? Title, DateTime? LimitDate) : this(null, Title, null, LimitDate, false)
 		{
 
@@ -16,8 +23,11 @@ namespace MvcTodo.ViewModels
 		}
 
 		//public int? TodoId { get; init; } = TodoId;
+		//[DisplayName("タイトル")]
 		//public string? Title { get; init; } = Title;
 		//public string? Description { get; init; } = Description;
+		//[DisplayName("期限")]
+		//[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
 		//public DateTime? LimitDate { get; init; } = LimitDate;
 		//public bool IsCompleted { get; init; } = IsCompleted;
 
