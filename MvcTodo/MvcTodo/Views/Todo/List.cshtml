@@ -37,10 +37,11 @@
 	{
 		var checkUrl = Url.Action("Check", "Todo", new RouteValueDictionary { { "id", todo.TodoId },  { "checkValue", todo.IsCompleted ? "off" : "on"}});
 		var todoUrl = Url.Action("Show", "Todo", new RouteValueDictionary { { "id", todo.TodoId} });
-		var iconHref = Url.Content($"~/images/icon/{(todo.IsCompleted ? "Checked" : "NotChecked")}.svg");
+		var checkedValue = (todo.IsCompleted ? "Checked" : "NotChecked");
+		var iconUrl = Url.Content($"~/images/icon/{checkedValue}.svg");
 		<div class="table_line">
 			<div class="completed">
-				<a href="@checkUrl"><img src="@iconHref" width="32" height="32" alt="Checked"/></a>
+				<a href="@checkUrl"><img src="@iconUrl" width="32" height="32" alt="@checkedValue" /></a>
 			</div>
 			<div class="title"><a href="@todoUrl">@Html.DisplayFor(model => todo.Title)</a></div>
 			<div class="limit">@Html.DisplayFor(model => todo.LimitDate)</div>
