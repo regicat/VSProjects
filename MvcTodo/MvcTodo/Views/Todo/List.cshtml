@@ -4,35 +4,44 @@
 
 @{
 	ViewData["Title"] = $"Todo一覧（{Model.ListMode}）";
-	string leftButtonClass = string.Empty;
-	string rightButtonClass = string.Empty;
+	var leftButtonClass = string.Empty;
+	var rightButtonClass = string.Empty;
+	var leftHref = ViewConst.Sharp;
+	var rightHref = ViewConst.Sharp;
 
 	switch (Model.ListMode)
 	{
-		case TodoListViewModel.ModeUncompleted:
+		case ViewConst.ModeUncompleted:
 			leftButtonClass = ViewConst.ButtonClassSelected;
 			rightButtonClass = ViewConst.ButtonClassNotSelected;
+			rightHref = Url.Action("All", "Todo");
 			break;
-		case TodoListViewModel.ModeAll:
+		case ViewConst.ModeAll:
 			leftButtonClass = ViewConst.ButtonClassNotSelected;
 			rightButtonClass = ViewConst.ButtonClassSelected;
+			leftHref = Url.Action("Index", "Todo");
 			break;
 	}
+
 }
 
 <div class="table">
 	<div class="table_top_line">
-		<div class="table_top_left left_tab">@Html.ActionLink(TodoListViewModel.ModeUncompleted, "Index", "Todo", null, new { @class = $"left_button {leftButtonClass}" })</div>
-		<div class="table_top_left left_tab">@Html.ActionLink(TodoListViewModel.ModeAll, "All", "Todo", null, new { @class = $"right_button {rightButtonClass}" })</div>
-		<div class="table_top"><a href="~/todo/add" class="button">新規</a></div>
+		<!-- <div class="table_top_left left_tab">@Html.ActionLink(ViewConst.ModeUncompleted, "Index", "Todo", null, new { @class = $"left_button {leftButtonClass}" })</div> -->
+		<div class="table_top_left left_tab"><a href="@leftHref" class="left_button @leftButtonClass">@ViewConst.ModeUncompleted</a></div>
+		<!-- <div class="table_top_left left_tab">@Html.ActionLink(ViewConst.ModeAll, "All", "Todo", null, new { @class = $"right_button {rightButtonClass}" })</div> -->
+		<div class="table_top_left left_tab"><a href="@rightHref" class="right_button @rightButtonClass">@ViewConst.ModeAll</a></div>
+		<div class="table_top">@Html.ActionLink(ViewConst.ModeNew, "Add", "Todo", null, new { @class = "button" })</div>
 	</div>
 	@foreach (var todo in Model.TodoList)
 	{
+		var checkUrl = Url.Action("Check", "Todo", new RouteValueDictionary { { "id", todo.TodoId },  { "checkValue", todo.IsCompleted ? "off" : "on"}});
+		var todoUrl = Url.Action("Show", "Todo", new RouteValueDictionary { { "id", todo.TodoId} });
 		<div class="table_line">
 			<div class="completed">
-				<a href="#"><img src="~/images/icon/@(todo.IsCompleted ? "Checked" : "NotChecked").svg" width="32" height="32" alt="Checked"/></a>
+				<a href="@checkUrl"><img src="~/images/icon/@(todo.IsCompleted ? "Checked" : "NotChecked").svg" width="32" height="32" alt="Checked"/></a>
 			</div>
-			<div class="title"><a href="#">@Html.DisplayFor(model => todo.Title)</a></div>
+			<div class="title"><a href="@todoUrl">@Html.DisplayFor(model => todo.Title)</a></div>
 			<div class="limit">@Html.DisplayFor(model => todo.LimitDate)</div>
 		</div>
 	}

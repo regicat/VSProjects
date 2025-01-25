@@ -10,9 +10,9 @@ namespace MvcTodo.Services
 		{
 			return new List<Todo>
 			{
-				new Todo("やること１"),
-				new Todo("やること２", new DateTime(2025,1,31)),
-				new Todo(1,"やること３",null,new DateTime(2025,2,1), true),
+				new Todo(1,"やること１", null,null,false),
+				new Todo(2,"やること２", null, new DateTime(2025,1,31), false),
+				new Todo(3,"やること３",null,new DateTime(2025,2,1), true),
 			};
 		}
 	}
