@@ -55,7 +55,7 @@ namespace MvcTodo.Controllers
 		public IActionResult Delete(int? id)
 		{
 
-			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
+			var vm = new TodoViewModel(1, "やること１", null, new DateTime(2025, 1, 31), false);
 
 			return View("Edit", vm);
 		}
@@ -75,9 +75,15 @@ namespace MvcTodo.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Save()
+		[ValidateAntiForgeryToken]
+		public IActionResult Save([Bind("TodoId,Title,LimitDate,IsCompleted")] TodoViewModel? vm)
 		{
-			return View("List");
+
+			if (!ModelState.IsValid)
+			{
+				return View("Edit", vm);
+			}
+			return Redirect($"/Todo/Index");
 		}
 	}
 }

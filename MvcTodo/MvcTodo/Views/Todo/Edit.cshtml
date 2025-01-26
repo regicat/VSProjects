@@ -4,7 +4,7 @@
 	ViewData["Title"] = $"Todo - 編集";
 }
 <div class="table">
-	<form asp-action="Save" asp-controller="Todo" method="post">
+	<form asp-action="Save" asp-controller="Todo" method="post" name="todoForm" id="todoForm">
 		<div class="table_line">
 			<div class="table_sub_line form">
 				<div class="row_header"><label asp-for="Title"></label></div>
@@ -14,7 +14,7 @@
 			<div class="table_sub_line error">
 				<div class="row_header">&nbsp;</div>
 				<div class="row_body">&nbsp;</div>
-				<div class="row_body">エラー</div>
+				<div class="row_body"><span asp-validation-for="Title"></span></div>
 			</div>
 			<div class="table_sub_line form">
 				<div class="row_header"><label asp-for="LimitDate"></label></div>
@@ -24,7 +24,7 @@
 			<div class="table_sub_line error">
 				<div class="row_header">&nbsp;</div>
 				<div class="row_body">&nbsp;</div>
-				<div class="row_body">エラー</div>
+				<div class="row_body"><span asp-validation-for="LimitDate"></span></div>
 			</div>
 			<div class="table_sub_line form">
 				<div class="row_header">完了</div>
