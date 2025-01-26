@@ -4,13 +4,12 @@
 	ViewData["Title"] = $"Todo - 編集";
 }
 <div class="table">
-	@using(Html.BeginForm("Save", "Todo", null, FormMethod.Post))
-	{
+	<form asp-action="Save" asp-controller="Todo" method="post">
 		<div class="table_line">
 			<div class="table_sub_line form">
-				<div class="row_header">@Html.DisplayNameFor(model => model.Title)</div>
+				<div class="row_header"><label asp-for="Title"></label></div>
 				<div class="row_body">:</div>
-				<div class="row_body">@Html.TextBoxFor(model => model.Title)</div>
+				<div class="row_body"><input asp-for="Title" /></div>
 			</div>
 			<div class="table_sub_line error">
 				<div class="row_header">&nbsp;</div>
@@ -18,9 +17,9 @@
 				<div class="row_body">エラー</div>
 			</div>
 			<div class="table_sub_line form">
-				<div class="row_header">@Html.DisplayNameFor(model => model.LimitDate)</div>
+				<div class="row_header"><label asp-for="LimitDate"></label></div>
 				<div class="row_body">:</div>
-				<div class="row_body">@Html.TextBoxFor(model => model.LimitDate)</div>
+				<div class="row_body"><input asp-for="LimitDate" /></div>
 			</div>
 			<div class="table_sub_line error">
 				<div class="row_header">&nbsp;</div>
@@ -30,16 +29,16 @@
 			<div class="table_sub_line form">
 				<div class="row_header">完了</div>
 				<div class="row_body">:</div>
-				<div class="row_body">@Html.CheckBoxFor(model => model.IsCompleted)</div>
+				<div class="row_body"><input asp-for="IsCompleted" /></div>
 			</div>
 			<div class="table_sub_line form">
-				<div class="row_body"><a href="#" onclick="javascript:todoForm.submit()" class="button">登録</a></div>
-				<div class="row_body"><a href="#" class="button">削除</a></div>
+				<div class="row_body"><a href="#" onclick="javascript:todoForm.submit()" class="button">@ViewConst.ModeSave</a></div>
+				<div class="row_body"><a href="#" class="button">@ViewConst.ModeDelete</a></div>
 			</div>
 		</div>
-		@Html.HiddenFor(model => model.TodoId)
-	}
+		<input asp-for="TodoId"/>
+	</form>
 	<div class="table_bottom_line">
-		<div class="table_bottom">@Html.ActionLink(ViewConst.ModeBack, "Index", "Todo", null, new { @class = "button" })</div>
+		<div class="table_bottom"><a asp-action="Index" asp-controller="Todo" class="button">@ViewConst.ModeBack</a></div>
 	</div>
 </div>

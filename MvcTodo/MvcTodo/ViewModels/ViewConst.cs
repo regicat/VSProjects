@@ -11,4 +11,6 @@ public static class ViewConst
 	public const string ModeNew = "新規";
 	public const string ModeEdit = "編集";
 	public const string ModeBack = "一覧に戻る";
+	public const string ModeSave = "登録";
+	public const string ModeDelete = "削除";
 }

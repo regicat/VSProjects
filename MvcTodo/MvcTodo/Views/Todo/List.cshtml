@@ -24,25 +24,33 @@
 	}
 
 }
-
 <div class="table">
 	<div class="table_top_line">
-		<div class="table_top_left left_tab"><a href="@leftHref" class="left_button @leftButtonClass">@ViewConst.ModeUncompleted</a></div>
-		<div class="table_top_left left_tab"><a href="@rightHref" class="right_button @rightButtonClass">@ViewConst.ModeAll</a></div>
-		<div class="table_top">@Html.ActionLink(ViewConst.ModeNew, "Add", "Todo", null, new { @class = "button" })</div>
+		@switch (Model.ListMode)
+		{
+			case ViewConst.ModeUncompleted:
+				<div class="table_top_left left_tab"><a href="#" class="left_button @ViewConst.ButtonClassSelected">@ViewConst.ModeUncompleted</a></div>
+				<div class="table_top_left left_tab"><a asp-action="All" asp-controller="Todo" class="right_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeAll</a></div>
+				break;
+			case ViewConst.ModeAll:
+				<div class="table_top_left left_tab"><a asp-action="All" asp-controller="Todo" class="left_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeUncompleted</a></div>
+				<div class="table_top_left left_tab"><a href="#" class="right_button @ViewConst.ButtonClassSelected">@ViewConst.ModeAll</a></div>
+				break;
+		}
+		<div class="table_top"><a asp-action="Add" asp-controller="Todo" class="button">@ViewConst.ModeNew</a></div>
 	</div>
 	@foreach (var todo in Model.TodoList)
 	{
-		var checkUrl = Url.Action("Check", "Todo", new RouteValueDictionary { { "id", todo.TodoId },  { "checkValue", todo.IsCompleted ? "off" : "on"}});
-		var todoUrl = Url.Action("Show", "Todo", new RouteValueDictionary { { "id", todo.TodoId} });
 		var checkedValue = (todo.IsCompleted ? "Checked" : "NotChecked");
 		var iconUrl = Url.Content($"~/images/icon/{checkedValue}.svg");
 		<div class="table_line">
 			<div class="completed">
-				<a href="@checkUrl"><img src="@iconUrl" width="32" height="32" alt="@checkedValue" /></a>
+				<a asp-action="Check" asp-controller="Todo" asp-route-id="@todo.TodoId" asp-route-checkValue="@(todo.IsCompleted ? "off" : "on")">
+					<img src="@iconUrl" width="32" height="32" alt="@checkedValue" />
+				</a>
 			</div>
-			<div class="title"><a href="@todoUrl">@Html.DisplayFor(model => todo.Title)</a></div>
-			<div class="limit">@Html.DisplayFor(model => todo.LimitDate)</div>
+			<div class="title"><a asp-action="Show" asp-controller="Todo" asp-route-id="@todo.TodoId">@todo.Title</a></div>
+			<div class="limit">@todo.LimitDate</div>
 		</div>
 	}
 </div>
