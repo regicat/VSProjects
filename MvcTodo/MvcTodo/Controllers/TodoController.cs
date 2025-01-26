@@ -39,32 +39,22 @@ namespace MvcTodo.Controllers
 		}
 		public IActionResult Edit(int? id)
 		{
-			if (id.HasValue)
-			{
-				Debug.Print(id.Value.ToString());
-			}
 
-			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
-			return View(vm);
+			var vm = new TodoViewModel(1, "やること１", null, new DateTime(2025, 1, 31), false);
+			return View("Edit", vm);
 		}
 
 		public IActionResult Show(int? id)
 		{
-			if (id.HasValue)
-			{
-				Debug.Print(id.Value.ToString());
-			}
-			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
 
-			return View("Edit",vm);
+			var vm = new TodoViewModel(1, "やること１",null, new DateTime(2025, 1, 31),false);
+
+			return View("Show",vm);
 		}
 
 		public IActionResult Delete(int? id)
 		{
-			if (id.HasValue)
-			{
-				Debug.Print(id.Value.ToString());
-			}
+
 			var vm = new TodoViewModel("やること１", new DateTime(2025, 1, 31));
 
 			return View("Edit", vm);
@@ -72,7 +62,7 @@ namespace MvcTodo.Controllers
 
 		public IActionResult Add()
 		{
-			return View("List");
+			return View("Edit");
 		}
 
 		public IActionResult Check(int? id, string? checkValue, string? listMode)

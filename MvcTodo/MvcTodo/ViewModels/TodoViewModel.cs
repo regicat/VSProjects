@@ -9,8 +9,8 @@ namespace MvcTodo.ViewModels
 		string? Title, 
 		string? Description,
 		[property: DisplayName("期限"), DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
-		DateTime? LimitDate, 
-		bool IsCompleted)
+		DateTime? LimitDate,
+		[property: DisplayName("状態")] bool IsCompleted)
 	{
 		public TodoViewModel(string? Title, DateTime? LimitDate) : this(null, Title, null, LimitDate, false)
 		{

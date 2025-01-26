@@ -1,43 +1,45 @@
-﻿@model MvcTodo.ViewModels.TodoViewModel
+﻿@using MvcTodo.ViewModels
+@model MvcTodo.ViewModels.TodoViewModel
 @{
-	ViewData["Title"] = "Todo一覧";
+	ViewData["Title"] = $"Todo - 編集";
 }
-	<div class="table">
-		<form action="#" method="POST" name="todoForm">
-			<div class="table_line">
-				<div class="table_sub_line form">
-					<div class="row_header">@Html.DisplayName(Model.Title)</div>
-					<div class="row_body">:</div>
-					<div class="row_body"><input type="text" field="*{title}" width="600"></div>
-				</div>
-				<div class="table_sub_line error">
-					<div class="row_header">&nbsp;</div>
-					<div class="row_body">&nbsp;</div>
-					<div class="row_body">エラー</div>
-				</div>
-				<div class="table_sub_line form">
-					<div class="row_header">期限</div>
-					<div class="row_body">:</div>
-					<div class="row_body"><input type="date" field="*{limitDate}"></div>
-				</div>
-				<div class="table_sub_line error">
-					<div class="row_header">&nbsp;</div>
-					<div class="row_body">&nbsp;</div>
-					<div  class="row_body">エラー</div>
-				</div>
-				<div class="table_sub_line form">
-					<div class="row_header">完了</div>
-					<div class="row_body">:</div>
-					<div class="row_body"><input type="checkbox" ></div>
-				</div>
-				<div class="table_sub_line form">
-					<div class="row_body"><a href="#" onclick="javascript:todoForm.submit()" class="button">登録</a></div>
-					<div class="row_body"><a href="#" class="button">削除</a></div>
-				</div>
+<div class="table">
+	@using(Html.BeginForm("Save", "Todo", null, FormMethod.Post))
+	{
+		<div class="table_line">
+			<div class="table_sub_line form">
+				<div class="row_header">@Html.DisplayNameFor(model => model.Title)</div>
+				<div class="row_body">:</div>
+				<div class="row_body">@Html.TextBoxFor(model => model.Title)</div>
 			</div>
-			<input type="hidden"  />
-		</form>
-		<div class="table_bottom_line">
-			<div class="table_bottom"><a href="#" class="button">一覧に戻る</a></div>
+			<div class="table_sub_line error">
+				<div class="row_header">&nbsp;</div>
+				<div class="row_body">&nbsp;</div>
+				<div class="row_body">エラー</div>
+			</div>
+			<div class="table_sub_line form">
+				<div class="row_header">@Html.DisplayNameFor(model => model.LimitDate)</div>
+				<div class="row_body">:</div>
+				<div class="row_body">@Html.TextBoxFor(model => model.LimitDate)</div>
+			</div>
+			<div class="table_sub_line error">
+				<div class="row_header">&nbsp;</div>
+				<div class="row_body">&nbsp;</div>
+				<div class="row_body">エラー</div>
+			</div>
+			<div class="table_sub_line form">
+				<div class="row_header">完了</div>
+				<div class="row_body">:</div>
+				<div class="row_body">@Html.CheckBoxFor(model => model.IsCompleted)</div>
+			</div>
+			<div class="table_sub_line form">
+				<div class="row_body"><a href="#" onclick="javascript:todoForm.submit()" class="button">登録</a></div>
+				<div class="row_body"><a href="#" class="button">削除</a></div>
+			</div>
 		</div>
+		@Html.HiddenFor(model => model.TodoId)
+	}
+	<div class="table_bottom_line">
+		<div class="table_bottom">@Html.ActionLink(ViewConst.ModeBack, "Index", "Todo", null, new { @class = "button" })</div>
 	</div>
+</div>

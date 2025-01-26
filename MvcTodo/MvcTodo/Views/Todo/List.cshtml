@@ -27,9 +27,7 @@
 
 <div class="table">
 	<div class="table_top_line">
-		<!-- <div class="table_top_left left_tab">@Html.ActionLink(ViewConst.ModeUncompleted, "Index", "Todo", null, new { @class = $"left_button {leftButtonClass}" })</div> -->
 		<div class="table_top_left left_tab"><a href="@leftHref" class="left_button @leftButtonClass">@ViewConst.ModeUncompleted</a></div>
-		<!-- <div class="table_top_left left_tab">@Html.ActionLink(ViewConst.ModeAll, "All", "Todo", null, new { @class = $"right_button {rightButtonClass}" })</div> -->
 		<div class="table_top_left left_tab"><a href="@rightHref" class="right_button @rightButtonClass">@ViewConst.ModeAll</a></div>
 		<div class="table_top">@Html.ActionLink(ViewConst.ModeNew, "Add", "Todo", null, new { @class = "button" })</div>
 	</div>

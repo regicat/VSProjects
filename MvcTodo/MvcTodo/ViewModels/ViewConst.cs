@@ -9,4 +9,6 @@ public static class ViewConst
 	public const string ModeUncompleted = "未完";
 	public const string ModeAll = "全て";
 	public const string ModeNew = "新規";
+	public const string ModeEdit = "編集";
+	public const string ModeBack = "一覧に戻る";
 }
