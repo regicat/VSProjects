@@ -11,7 +11,7 @@ namespace MvcTodo.Validations
 				return ValidationResult.Success; 
 			}
 
-			return dateValue > DateTime.Now.Date ? ValidationResult.Success : // 未来日付の場合は成功
+			return dateValue >= DateTime.Now.Date ? ValidationResult.Success : // 未来日付の場合は成功
 				new ValidationResult(ErrorMessage ?? "日付は未来である必要があります。");
 		}
 
