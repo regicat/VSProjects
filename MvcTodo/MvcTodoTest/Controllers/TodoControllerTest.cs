@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +22,7 @@ namespace MvcTodoTest.Controllers
 		public void IndexTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var entityList = new List<Todo>()
-			{
-				new Todo(1,"やること１","",null,false),
-				new Todo(3,"やること２","",new DateTime(2015,1,31),false),
-				new Todo(2,"やること３","",null,true),
-
-			};
+			var entityList = CreateDummyTodoList();
 			mock.Setup(service => service.GetUnCompletedList())
 				.Returns(entityList);
 			var expectedList = entityList
@@ -36,13 +32,335 @@ namespace MvcTodoTest.Controllers
 			var controller = new TodoController(mock.Object);
 			var result = controller.Index();
 
+			mock.Verify(x => x.GetUnCompletedList(), Times.Once);
 			Assert.That(result, Is.TypeOf(typeof(ViewResult)));
-			var actual = (ViewResult)result;
-			Assert.That(actual.ViewName, Is.EqualTo("List"));
-			var actualModel = actual.Model;
-			Assert.That(actualModel, Is.InstanceOf<IEnumerable<TodoViewModel>>());
-			var actualList = (IEnumerable<TodoViewModel>)actualModel;
-			Assert.That(actualList, Is.EquivalentTo(expectedList));
+			var actualResult = (ViewResult)result;
+			Assert.That(actualResult.ViewName, Is.EqualTo("List"));
+			var actual = actualResult.Model;
+			Assert.That(actual, Is.InstanceOf<TodoListViewModel>());
+			var (listMode, actualList) = (TodoListViewModel)actual;
+			Assert.Multiple(() =>
+			{
+				Assert.That(listMode, Is.EqualTo(ViewConst.ModeUncompleted));
+				Assert.That(actualList, Is.EquivalentTo(expectedList));
+			});
+		}
+
+
+		[Test]
+		public void AllTest()
+		{
+			var mock = new Mock<ITodoService>();
+			var entityList = CreateDummyTodoList();
+			mock.Setup(service => service.GetAllList())
+				.Returns(entityList);
+			var expectedList = entityList
+				.Select(e => new TodoViewModel(e.TodoId, e.Title, e.Description, e.LimitDate, e.IsCompleted))
+				.ToList();
+
+			var controller = new TodoController(mock.Object);
+			var result = controller.All();
+
+			mock.Verify(x => x.GetAllList(), Times.Once);
+			Assert.That(result, Is.TypeOf(typeof(ViewResult)));
+			var actualResult = (ViewResult)result;
+			Assert.That(actualResult.ViewName, Is.EqualTo("List"));
+			var actual = actualResult.Model;
+			Assert.That(actual, Is.InstanceOf<TodoListViewModel>());
+			Assert.Multiple(() =>
+			{
+				var (listMode, actualList) = (TodoListViewModel)actual;
+				Assert.That(listMode, Is.EqualTo(ViewConst.ModeAll));
+				Assert.That(actualList, Is.EquivalentTo(expectedList));
+			});
+		}
+
+		[Test]
+		public void ShowTest()
+		{
+			var mock = new Mock<ITodoService>();
+			var todo = CreateDummyTodo();
+			var expected = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			mock.Setup(m => m.GetById(It.IsAny<int>()))
+				.Returns(todo)
+				.Callback<int>(id =>
+				{
+					Assert.That(id, Is.EqualTo(1));
+				});
+
+			var controller = new TodoController(mock.Object);
+			var result = controller.Show(1);
+			mock.Verify(x => x.GetById(1), Times.Once);
+			Assert.Multiple(() =>
+			{
+				Assert.That(result, Is.InstanceOf<ViewResult>());
+				var actualResult = (ViewResult)result;
+				Assert.That(actualResult.ViewName, Is.EqualTo("Show"));
+				var actualModel = actualResult.Model;
+				Assert.That(actualModel, Is.InstanceOf<TodoViewModel>());
+				if (actualModel is not TodoViewModel actual) return;
+				Assert.That(actual, Is.EqualTo(expected));
+			});
+
+		}
+
+		[Test]
+		public void ShowNotFoundTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()))
+				.Returns((Todo?)null);
+
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Show(1);
+			mock.Verify(x => x.GetById(1), Times.Once);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+
+		}
+
+		[Test]
+		public void ShowIdNullTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()));
+
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Show(null);
+			mock.Verify(x => x.GetById(1), Times.Never);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+		}
+
+		[Test]
+		public void EditTest()
+		{
+			var mock = new Mock<ITodoService>();
+			var todo = CreateDummyTodo();
+			var expected = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			mock.Setup(m => m.GetById(It.IsAny<int>()))
+				.Returns(todo)
+				.Callback<int>(id =>
+				{
+					Assert.That(id, Is.EqualTo(1));
+				});
+
+			var controller = new TodoController(mock.Object);
+			var result = controller.Edit(1);
+			mock.Verify(x => x.GetById(1), Times.Once);
+			Assert.Multiple(() =>
+			{
+				Assert.That(result, Is.InstanceOf<ViewResult>());
+				var actualResult = (ViewResult)result;
+				Assert.That(actualResult.ViewName, Is.EqualTo("Edit"));
+				var actualModel = actualResult.Model;
+				Assert.That(actualModel, Is.InstanceOf<TodoViewModel>());
+				if (actualModel is not TodoViewModel actual) return;
+				Assert.That(actual, Is.EqualTo(expected));
+			});
+
+		}
+
+		[Test]
+		public void EditNotFoundTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()))
+				.Returns((Todo?)null);
+
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Edit(1);
+			mock.Verify(x => x.GetById(1), Times.Once);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+
+		}
+		[Test]
+		public void EditIdNullTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()));
+
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Edit(null);
+			mock.Verify(x => x.GetById(1), Times.Never);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+		}
+
+		[Test]
+		public void AddTest()
+		{
+			var mock = new Mock<ITodoService>();
+
+			var controller = new TodoController(mock.Object);
+			var actualResult = controller.Add();
+			Assert.That(actualResult, Is.InstanceOf<ViewResult>());
+			var actual = (ViewResult)actualResult;
+			Assert.Multiple(() =>
+			{
+				Assert.That(actual.ViewName, Is.EqualTo("Edit"));
+				Assert.That(actual.Model, Is.Null);
+			});
+		}
+
+		[Test]
+		public void DeleteTest()
+		{
+			var mock = new Mock<ITodoService>();
+			var todo = CreateDummyTodo();
+			mock.Setup(m => m.Delete(It.IsAny<int>()))
+				.Callback<int>(id =>
+				{
+					Assert.That(id, Is.EqualTo(1));
+				});
+			var controller = new TodoController(mock.Object);
+			var result = controller.Delete(1);
+			mock.Verify(x => x.Delete(1), Times.Once);
+			Assert.That(result, Is.InstanceOf<RedirectResult>());
+			var actualResult = (RedirectResult)result;
+			Assert.That(actualResult.Url, Is.EqualTo("/Todo/Index"));
+		}
+
+		[Test]
+		public void DeleteIdNullTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.Delete(It.IsAny<int>()))
+				.Callback<int>(id =>
+				{
+					Assert.That(id, Is.EqualTo(1));
+				});
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Delete(null);
+			mock.Verify(x => x.Delete(1), Times.Never);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+		}
+
+		[Test]
+		public void SaveTest()
+		{
+			var mock = new Mock<ITodoService>();
+			var todo = CreateDummyTodo();
+			var expected = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			mock.Setup(m => m.Save(It.IsAny<Todo>()))
+				.Callback<Todo>(e =>
+				{
+					Assert.That(e, Is.EqualTo(todo));
+				});
+
+			var controller = new TodoController(mock.Object);
+			var vm = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var result = controller.Save(vm);
+			mock.Verify(x => x.Save(todo), Times.Once);
+			Assert.Multiple(() =>
+			{
+				Assert.That(result, Is.InstanceOf<RedirectResult>());
+				var actualResult = (RedirectResult)result;
+				Assert.That(actualResult.Url, Is.EqualTo("/Todo/Index"));
+			});
+		}
+
+		[Test]
+		public void SaveValidationErrorTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.Save(It.IsAny<Todo>()));
+
+			var controller = new TodoController(mock.Object);
+			controller.ModelState.AddModelError("Title", "エラー");
+			var todo = CreateDummyTodo() with { Title = null };
+			var vm = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var result = controller.Save(vm);
+			mock.Verify(x => x.Save(todo), Times.Never);
+			Assert.Multiple(() =>
+			{
+				Assert.That(result, Is.InstanceOf<ViewResult>());
+				var actualResult = (ViewResult)result;
+				Assert.That(actualResult.ViewName, Is.EqualTo("Edit"));
+				Assert.That(actualResult.Model, Is.EqualTo(vm));
+			});
+		}
+
+		[TestCase("on", "未完")]
+		[TestCase("off", "未完")]
+		[TestCase("on", "全て")]
+		[TestCase("off", "全て")]
+		[Test]
+		public void CheckTest(string checkValue, string mode)
+		{
+			var mock = new Mock<ITodoService>();
+			var todo = CreateDummyTodo();
+			var expected = todo with { IsCompleted = checkValue == "on" };
+			mock.Setup(m => m.GetById(It.IsAny<int>()))
+				.Returns(todo)
+				.Callback<int>(id =>
+				{
+					Assert.That(id, Is.EqualTo(1));
+				});
+			mock.Setup(m => m.Save(It.IsAny<Todo>()))
+				.Callback<Todo>(e =>
+				{
+					Assert.That(e, Is.EqualTo(expected));
+				});
+			var controller = new TodoController(mock.Object);
+			var result = controller.Check(1,checkValue, mode);
+			mock.Verify(x => x.Save(expected), Times.Once);
+			Assert.That(result, Is.InstanceOf<RedirectResult>());
+			var actualResult = (RedirectResult)result;
+			var expectedUrl = mode == ViewConst.ModeUncompleted ? "Todo/Index" : "Todo/All";
+			Assert.That(actualResult.Url, Is.EqualTo(expectedUrl));
+		}
+
+		[Test]
+		public void CheckNotFoundTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()))
+				.Returns((Todo?)null);
+
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Check(1, "on", "All");
+			mock.Verify(x => x.GetById(1), Times.Once);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+
+		}
+		[Test]
+		public void CheckIdNullTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()));
+
+			var controller = new TodoController(mock.Object);
+			var actual = controller.Check(null, "on", "All");
+			mock.Verify(x => x.GetById(1), Times.Never);
+			Assert.That(actual, Is.InstanceOf<NotFoundResult>());
+		}
+
+		[Test]
+		public void CheckCheckModeInvalidTest()
+		{
+			var mock = new Mock<ITodoService>();
+			mock.Setup(m => m.GetById(It.IsAny<int>()));
+
+			var controller = new TodoController(mock.Object);
+			var result = controller.Check(null, "on", "Ex");
+			mock.Verify(x => x.GetById(1), Times.Once);
+			Assert.That(result, Is.InstanceOf<RedirectResult>());
+			var actualResult = (RedirectResult)result;
+			// リストモードが「未完」「全て」以外の時は未完とみなす
+			Assert.That(actualResult.Url, Is.EqualTo("Todo/Index"));
+		}
+		private static Todo CreateDummyTodo()
+		{
+			return new Todo(1, "やること１", string.Empty, new DateTime(2025, 1, 31), false);
+		}
+		private static List<Todo> CreateDummyTodoList()
+		{
+			var entityList = new List<Todo>()
+			{
+				new Todo(1,"やること１",string.Empty,null,false),
+				new Todo(3,"やること２",null ,new DateTime(2025,1,31),false),
+				new Todo(2,"やること３",null,null,true),
+
+			};
+			return entityList;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using MvcTodo.Entities;
 using MvcTodo.Services;
 using MvcTodo.Services.Interfaces;
 using MvcTodo.ViewModels;
@@ -22,12 +23,12 @@ namespace MvcTodo.Controllers
 				e.LimitDate,
 				e.IsCompleted
 			));
-			return View("List", new TodoListViewModel("未完", todoList)); 
+			return View("List", new TodoListViewModel(ViewConst.ModeUncompleted, todoList)); 
 		}
 
 		public IActionResult All()
 		{
-			var entities = _todoService.GetUnCompletedList();
+			var entities = _todoService.GetAllList();
 			var todoList = entities.Select(e => new TodoViewModel(
 				e.TodoId,
 				e.Title,
@@ -35,29 +36,38 @@ namespace MvcTodo.Controllers
 				e.LimitDate,
 				e.IsCompleted
 			));
-			return View("List", new TodoListViewModel("全て", todoList));
+			return View("List", new TodoListViewModel(ViewConst.ModeAll, todoList));
 		}
 		public IActionResult Edit(int? id)
 		{
-
-			var vm = new TodoViewModel(1, "やること１", null, new DateTime(2025, 1, 31), false);
+			if (!id.HasValue) { return new NotFoundResult(); }
+			var todo = _todoService.GetById(id.Value);
+			if (todo == null)
+			{
+				return new NotFoundResult();
+			}
+			var vm = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted); 
 			return View("Edit", vm);
 		}
 
 		public IActionResult Show(int? id)
 		{
-
-			var vm = new TodoViewModel(1, "やること１",null, new DateTime(2025, 1, 31),false);
+			if(!id.HasValue) { return new NotFoundResult(); }
+			var todo = _todoService.GetById(id.Value);
+			if (todo == null)
+			{
+				return new NotFoundResult();
+			}
+			var vm = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 
 			return View("Show",vm);
 		}
 
 		public IActionResult Delete(int? id)
 		{
-
-			var vm = new TodoViewModel(1, "やること１", null, new DateTime(2025, 1, 31), false);
-
-			return View("Edit", vm);
+			if (!id.HasValue) { return new NotFoundResult(); }
+			_todoService.Delete(id.Value);
+			return Redirect($"/Todo/Index");
 		}
 
 		public IActionResult Add()
@@ -67,11 +77,8 @@ namespace MvcTodo.Controllers
 
 		public IActionResult Check(int? id, string? checkValue, string? listMode)
 		{
-			if (checkValue != null)
-			{
-				Debug.Print(checkValue);
-			}
-			return View("List");
+			
+			return Redirect($"/Todo/Index");
 		}
 
 		[HttpPost]
@@ -79,10 +86,13 @@ namespace MvcTodo.Controllers
 		public IActionResult Save([Bind("TodoId,Title,LimitDate,IsCompleted")] TodoViewModel? vm)
 		{
 
-			if (!ModelState.IsValid)
+			if (vm == null || !ModelState.IsValid)
 			{
 				return View("Edit", vm);
 			}
+
+			var todo = new Todo(vm.TodoId, vm.Title, vm.Description, vm.LimitDate, vm.IsCompleted);
+			todoService.Save(todo);
 			return Redirect($"/Todo/Index");
 		}
 	}
