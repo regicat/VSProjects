@@ -9,13 +9,10 @@ namespace MvcTodo.Controllers
 {
 	public class TodoController(ITodoService todoService) : Controller
 	{
-
-		private readonly ITodoService _todoService = todoService;
-
 		public IActionResult Index()
 		{
 			//var entities = new TodoService().GetUnCompletedList();
-			var entities = _todoService.GetUnCompletedList();
+			var entities = todoService.GetUnCompletedList();
 			var todoList = entities.Select(e => new TodoViewModel(
 				e.TodoId,
 				e.Title,
@@ -28,7 +25,7 @@ namespace MvcTodo.Controllers
 
 		public IActionResult All()
 		{
-			var entities = _todoService.GetAllList();
+			var entities = todoService.GetAllList();
 			var todoList = entities.Select(e => new TodoViewModel(
 				e.TodoId,
 				e.Title,
@@ -41,7 +38,7 @@ namespace MvcTodo.Controllers
 		public IActionResult Edit(int? id)
 		{
 			if (!id.HasValue) { return new NotFoundResult(); }
-			var todo = _todoService.GetById(id.Value);
+			var todo = todoService.GetById(id.Value);
 			if (todo == null)
 			{
 				return new NotFoundResult();
@@ -53,7 +50,7 @@ namespace MvcTodo.Controllers
 		public IActionResult Show(int? id)
 		{
 			if(!id.HasValue) { return new NotFoundResult(); }
-			var todo = _todoService.GetById(id.Value);
+			var todo = todoService.GetById(id.Value);
 			if (todo == null)
 			{
 				return new NotFoundResult();
@@ -66,8 +63,8 @@ namespace MvcTodo.Controllers
 		public IActionResult Delete(int? id)
 		{
 			if (!id.HasValue) { return new NotFoundResult(); }
-			_todoService.Delete(id.Value);
-			return Redirect($"/Todo/Index");
+			todoService.Delete(id.Value);
+			return RedirectToAction("Index", "Todo");
 		}
 
 		public IActionResult Add()
@@ -77,8 +74,14 @@ namespace MvcTodo.Controllers
 
 		public IActionResult Check(int? id, string? checkValue, string? listMode)
 		{
-			
-			return Redirect($"/Todo/Index");
+			if (!id.HasValue) { return new NotFoundResult(); }
+
+			var todo = todoService.GetById(id.Value);
+			if (todo == null) { return new NotFoundResult(); }
+
+			todoService.Save(todo with { IsCompleted = checkValue == ViewConst.CheckOn });
+			var redirectActionName = listMode == ViewConst.ModeAll ? "All" : "Index";
+			return RedirectToAction(redirectActionName, "Todo");
 		}
 
 		[HttpPost]
@@ -93,7 +96,7 @@ namespace MvcTodo.Controllers
 
 			var todo = new Todo(vm.TodoId, vm.Title, vm.Description, vm.LimitDate, vm.IsCompleted);
 			todoService.Save(todo);
-			return Redirect($"/Todo/Index");
+			return RedirectToAction("Index", "Todo");
 		}
 	}
 }

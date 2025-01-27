@@ -13,4 +13,7 @@ public static class ViewConst
 	public const string ModeBack = "一覧に戻る";
 	public const string ModeSave = "登録";
 	public const string ModeDelete = "削除";
+
+	public const string CheckOn = "on";
+	public const string CheckOff = "off";
 }
