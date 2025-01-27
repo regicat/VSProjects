@@ -1,12 +1,17 @@
-using MvcTodo.Services;
+ï»¿using MvcTodo.Services;
 using MvcTodo.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MvcTodo.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MvcTodoContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MvcTodoContext") ?? throw new InvalidOperationException("Connection string 'MvcTodoContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// DI’è‹`
+// DIå®šç¾©
 builder.Services.AddSingleton<ITodoService,TodoService>();
 
 var app = builder.Build();

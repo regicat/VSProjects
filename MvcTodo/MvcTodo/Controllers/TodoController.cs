@@ -14,7 +14,7 @@ namespace MvcTodo.Controllers
 			//var entities = new TodoService().GetUnCompletedList();
 			var entities = todoService.GetUnCompletedList();
 			var todoList = entities.Select(e => new TodoViewModel(
-				e.TodoId,
+				e.Id,
 				e.Title,
 				e.Description,
 				e.LimitDate,
@@ -27,7 +27,7 @@ namespace MvcTodo.Controllers
 		{
 			var entities = todoService.GetAllList();
 			var todoList = entities.Select(e => new TodoViewModel(
-				e.TodoId,
+				e.Id,
 				e.Title,
 				e.Description,
 				e.LimitDate,
@@ -43,7 +43,7 @@ namespace MvcTodo.Controllers
 			{
 				return new NotFoundResult();
 			}
-			var vm = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted); 
+			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted); 
 			return View("Edit", vm);
 		}
 
@@ -55,7 +55,7 @@ namespace MvcTodo.Controllers
 			{
 				return new NotFoundResult();
 			}
-			var vm = new TodoViewModel(todo.TodoId, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 
 			return View("Show",vm);
 		}
@@ -86,7 +86,7 @@ namespace MvcTodo.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Save([Bind("TodoId,Title,LimitDate,IsCompleted")] TodoViewModel? vm)
+		public IActionResult Save([Bind("Id,Title,LimitDate,IsCompleted")] TodoViewModel? vm)
 		{
 
 			if (vm == null || !ModelState.IsValid)
