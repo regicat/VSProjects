@@ -12,7 +12,7 @@ builder.Services.AddDbContext<MvcTodoContext>(options =>
 builder.Services.AddControllersWithViews();
 
 // DI定義
-builder.Services.AddSingleton<ITodoService,TodoService>();
+builder.Services.AddScoped<ITodoService,TodoService>();
 
 var app = builder.Build();
 

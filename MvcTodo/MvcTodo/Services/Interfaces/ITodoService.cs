@@ -4,6 +4,7 @@ namespace MvcTodo.Services.Interfaces
 {
 	public interface ITodoService
 	{
+
 		IEnumerable<Todo> GetUnCompletedList();
 		IEnumerable<Todo> GetAllList();
 

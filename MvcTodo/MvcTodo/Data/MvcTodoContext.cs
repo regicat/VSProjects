@@ -7,13 +7,8 @@ using MvcTodo.Entities;
 
 namespace MvcTodo.Data
 {
-    public class MvcTodoContext : DbContext
+    public class MvcTodoContext(DbContextOptions<MvcTodoContext> options) : DbContext(options)
     {
-        public MvcTodoContext (DbContextOptions<MvcTodoContext> options)
-            : base(options)
-        {
-        }
-
-        public DbSet<MvcTodo.Entities.Todo> Todo { get; set; } = default!;
+		public DbSet<MvcTodo.Entities.Todo> Todo { get; set; } = null!;
     }
 }

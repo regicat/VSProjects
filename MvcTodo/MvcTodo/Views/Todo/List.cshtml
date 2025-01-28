@@ -39,6 +39,10 @@
 		}
 		<div class="table_top"><a asp-action="Add" asp-controller="Todo" class="button">@ViewConst.ModeNew</a></div>
 	</div>
+	@if (!Model.TodoList.Any())
+	{
+		<div class="table_line"><p>Todoがありません。</p></div>
+	}
 	@foreach (var todo in Model.TodoList)
 	{
 		var checkedValue = (todo.IsCompleted ? "Checked" : "NotChecked");
