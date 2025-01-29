@@ -33,7 +33,7 @@
 				<div class="table_top_left left_tab"><a asp-action="All" asp-controller="Todo" class="right_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeAll</a></div>
 				break;
 			case ViewConst.ModeAll:
-				<div class="table_top_left left_tab"><a asp-action="All" asp-controller="Todo" class="left_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeUncompleted</a></div>
+				<div class="table_top_left left_tab"><a asp-action="Index" asp-controller="Todo" class="left_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeUncompleted</a></div>
 				<div class="table_top_left left_tab"><a href="#" class="right_button @ViewConst.ButtonClassSelected">@ViewConst.ModeAll</a></div>
 				break;
 		}

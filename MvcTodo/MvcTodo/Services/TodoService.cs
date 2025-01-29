@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MvcTodo.Data;
 using MvcTodo.Entities;
 using MvcTodo.Services.Interfaces;
@@ -9,35 +10,41 @@ namespace MvcTodo.Services
 {
 	public class TodoService(MvcTodoContext dbContext) : ITodoService
 	{
-		public void Delete(int id)
+		public int Delete(int id)
 		{
-			throw new NotImplementedException();
+			var entity = GetById(id);
+			if(entity == null) return 0;
+			dbContext.Todo.Remove(entity);
+			return dbContext.SaveChanges();
+
 		}
 
 		public IEnumerable<Todo> GetAllList()
 		{
-			throw new NotImplementedException();
+			return dbContext.Todo;
 		}
 
-		public Todo GetById(int id)
+		public Todo? GetById(int id)
 		{
-			throw new NotImplementedException();
+			return dbContext.Todo.SingleOrDefault(d => d.Id == id);
 		}
 
 		public IEnumerable<Todo> GetUnCompletedList()
 		{
-			return dbContext.Todo.ToList();
-			//return new List<Todo>
-			//{
-			//	new Todo(1,"やること１", null,null,false),
-			//	new Todo(2,"やること２", null, new DateTime(2025,1,31), false),
-			//	new Todo(3,"やること３",null,new DateTime(2025,2,1), true),
-			//};
+			return dbContext.Todo.Where(d => !d.IsCompleted);
 		}
 
-		public void Save(Todo entity)
+		public int Save(Todo entity)
 		{
-			throw new NotImplementedException();
+			if (dbContext.Todo.Any(d => d.Id == entity.Id))
+			{
+				dbContext.Todo.Update(entity);
+			}
+			else
+			{
+				dbContext.Todo.Add(entity);
+			}
+			return dbContext.SaveChanges();
 		}
 	}
 }

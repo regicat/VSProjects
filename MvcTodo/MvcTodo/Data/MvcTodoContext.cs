@@ -9,6 +9,10 @@ namespace MvcTodo.Data
 {
     public class MvcTodoContext(DbContextOptions<MvcTodoContext> options) : DbContext(options)
     {
-		public DbSet<MvcTodo.Entities.Todo> Todo { get; set; } = null!;
+		public virtual DbSet<MvcTodo.Entities.Todo> Todo { get; set; } = null!;
+
+		public MvcTodoContext() : this(new DbContextOptions<MvcTodoContext>())
+		{
+		}
     }
 }

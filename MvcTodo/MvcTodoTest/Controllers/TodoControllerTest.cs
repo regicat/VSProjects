@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MvcTodo.Controllers;
 using MvcTodo.Entities;
 using MvcTodo.Services.Interfaces;
 using MvcTodo.ViewModels;
-using NUnit.Framework.Legacy;
+using MvcTodoTest.Utilities;
 
 namespace MvcTodoTest.Controllers
 {
@@ -22,7 +15,7 @@ namespace MvcTodoTest.Controllers
 		public void IndexTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var entityList = CreateDummyTodoList();
+			var entityList = DataUtil.CreateDummyTodoList();
 			mock.Setup(service => service.GetUnCompletedList())
 				.Returns(entityList);
 			var expectedList = entityList
@@ -51,7 +44,7 @@ namespace MvcTodoTest.Controllers
 		public void AllTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var entityList = CreateDummyTodoList();
+			var entityList = DataUtil.CreateDummyTodoList();
 			mock.Setup(service => service.GetAllList())
 				.Returns(entityList);
 			var expectedList = entityList
@@ -71,7 +64,7 @@ namespace MvcTodoTest.Controllers
 			{
 				var (listMode, actualList) = (TodoListViewModel)actual;
 				Assert.That(listMode, Is.EqualTo(ViewConst.ModeAll));
-				Assert.That(actualList, Is.EquivalentTo(expectedList));
+				Assert.That(actualList, Is.EquivalentTo());
 			});
 		}
 
@@ -79,7 +72,7 @@ namespace MvcTodoTest.Controllers
 		public void ShowTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = CreateDummyTodo();
+			var todo = DataUtil.CreateDummyTodo();
 			var expected = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
@@ -134,7 +127,7 @@ namespace MvcTodoTest.Controllers
 		public void EditTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = CreateDummyTodo();
+			var todo = DataUtil.CreateDummyTodo();
 			var expected = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
@@ -204,7 +197,7 @@ namespace MvcTodoTest.Controllers
 		public void DeleteTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = CreateDummyTodo();
+			var todo = DataUtil.CreateDummyTodo();
 			mock.Setup(m => m.Delete(It.IsAny<int>()))
 				.Callback<int>(id =>
 				{
@@ -241,7 +234,7 @@ namespace MvcTodoTest.Controllers
 		public void SaveTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = CreateDummyTodo();
+			var todo = DataUtil.CreateDummyTodo();
 			var expected = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 			mock.Setup(m => m.Save(It.IsAny<Todo>()))
 				.Callback<Todo>(e =>
@@ -270,7 +263,7 @@ namespace MvcTodoTest.Controllers
 
 			var controller = new TodoController(mock.Object);
 			controller.ModelState.AddModelError("Title", "エラー");
-			var todo = CreateDummyTodo() with { Title = null };
+			var todo = DataUtil.CreateDummyTodo() with { Title = null };
 			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 			var result = controller.Save(vm);
 			Assert.Multiple(() =>
@@ -291,7 +284,7 @@ namespace MvcTodoTest.Controllers
 		public void CheckTest(string checkValue, string mode)
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = CreateDummyTodo();
+			var todo = DataUtil.CreateDummyTodo();
 			var expected = todo with { IsCompleted = checkValue == "on" };
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
@@ -347,7 +340,7 @@ namespace MvcTodoTest.Controllers
 		public void CheckModeInvalidTest()
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = CreateDummyTodo();
+			var todo = DataUtil.CreateDummyTodo();
 			var expected = todo with { IsCompleted = true };
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
@@ -367,22 +360,6 @@ namespace MvcTodoTest.Controllers
 				Assert.That(actualResult.ActionName, Is.EqualTo("Index"));
 				Assert.That(actualResult.ControllerName, Is.EqualTo("Todo"));
 			});
-		}
-		
-		private static Todo CreateDummyTodo()
-		{
-			return new Todo(1, "やること１", string.Empty, new DateTime(2025, 1, 31), false);
-		}
-		private static List<Todo> CreateDummyTodoList()
-		{
-			var entityList = new List<Todo>()
-			{
-				new Todo(1,"やること１",string.Empty,null,false),
-				new Todo(3,"やること２",null ,new DateTime(2025,1,31),false),
-				new Todo(2,"やること３",null,null,true),
-
-			};
-			return entityList;
 		}
 	}
 }

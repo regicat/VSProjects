@@ -14,6 +14,9 @@ builder.Services.AddControllersWithViews();
 // DI定義
 builder.Services.AddScoped<ITodoService,TodoService>();
 
+// テストデータ作成（本番運用時は下1行削除
+builder.Services.AddHostedService<DatabaseInitializer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

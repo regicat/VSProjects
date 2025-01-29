@@ -9,8 +9,8 @@ namespace MvcTodo.Services.Interfaces
 		IEnumerable<Todo> GetAllList();
 
 		Todo? GetById(int id);
-		void Save(Todo entity);
-		void Delete(int id);
+		int Save(Todo entity);
+		int Delete(int id);
 
 	}
 }
