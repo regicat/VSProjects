@@ -29,8 +29,11 @@ public class DatabaseInitializer(IServiceProvider serviceProvider) : IHostedServ
 
 	private static IEnumerable<Todo> CreateTestData()
 	{
-		var list = DataUtil.CreateDummyTodoList();
-		return list.Select(d => d with { Id = (int?)null });
+		return DataUtil.CreateDummyTodoList().Select(todo =>
+		{
+			todo.Id = null;
+			return todo;
+		}).ToList();
 	}
 
 	public async Task StopAsync(CancellationToken cancellationToken)

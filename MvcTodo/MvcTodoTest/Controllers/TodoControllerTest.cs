@@ -1,10 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MvcTodo.Controllers;
+using MvcTodo.Data;
 using MvcTodo.Entities;
 using MvcTodo.Services.Interfaces;
 using MvcTodo.ViewModels;
 using MvcTodoTest.Utilities;
+using NUnit.Framework.Legacy;
 
 namespace MvcTodoTest.Controllers
 {
@@ -64,7 +73,7 @@ namespace MvcTodoTest.Controllers
 			{
 				var (listMode, actualList) = (TodoListViewModel)actual;
 				Assert.That(listMode, Is.EqualTo(ViewConst.ModeAll));
-				Assert.That(actualList, Is.EquivalentTo());
+				Assert.That(actualList, Is.EquivalentTo(expectedList).UsingPropertiesComparer());
 			});
 		}
 
@@ -239,7 +248,7 @@ namespace MvcTodoTest.Controllers
 			mock.Setup(m => m.Save(It.IsAny<Todo>()))
 				.Callback<Todo>(e =>
 				{
-					Assert.That(e, Is.EqualTo(todo));
+					Assert.That(e, Is.EqualTo(todo).UsingPropertiesComparer());
 				});
 
 			var controller = new TodoController(mock.Object);
@@ -247,7 +256,7 @@ namespace MvcTodoTest.Controllers
 			var result = controller.Save(vm);
 			Assert.Multiple(() =>
 			{
-				mock.Verify(x => x.Save(todo), Times.Once);
+				mock.Verify(x => x.Save(It.IsAny<Todo>()), Times.Once);
 				Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
 				var actualResult = (RedirectToActionResult)result;
 				Assert.That(actualResult.ActionName, Is.EqualTo("Index"));
@@ -263,7 +272,8 @@ namespace MvcTodoTest.Controllers
 
 			var controller = new TodoController(mock.Object);
 			controller.ModelState.AddModelError("Title", "エラー");
-			var todo = DataUtil.CreateDummyTodo() with { Title = null };
+			var todo = DataUtil.CreateDummyTodo();
+			todo.Id = null;
 			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
 			var result = controller.Save(vm);
 			Assert.Multiple(() =>
@@ -284,10 +294,10 @@ namespace MvcTodoTest.Controllers
 		public void CheckTest(string checkValue, string mode)
 		{
 			var mock = new Mock<ITodoService>();
-			var todo = DataUtil.CreateDummyTodo();
-			var expected = todo with { IsCompleted = checkValue == "on" };
+			var expected = DataUtil.CreateDummyTodo();
+			expected.IsCompleted = checkValue == ViewConst.CheckOn;
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
-				.Returns(todo)
+				.Returns(expected)
 				.Callback<int>(id =>
 				{
 					Assert.That(id, Is.EqualTo(1));
@@ -341,7 +351,7 @@ namespace MvcTodoTest.Controllers
 		{
 			var mock = new Mock<ITodoService>();
 			var todo = DataUtil.CreateDummyTodo();
-			var expected = todo with { IsCompleted = true };
+			todo.IsCompleted = true;
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
 				.Callback<int>(id =>

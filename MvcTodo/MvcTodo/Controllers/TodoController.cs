@@ -79,7 +79,8 @@ namespace MvcTodo.Controllers
 			var todo = todoService.GetById(id.Value);
 			if (todo == null) { return new NotFoundResult(); }
 
-			todoService.Save(todo with { IsCompleted = checkValue == ViewConst.CheckOn });
+			todo.IsCompleted = checkValue == ViewConst.CheckOn;
+			todoService.Save(todo);
 			var redirectActionName = listMode == ViewConst.ModeAll ? "All" : "Index";
 			return RedirectToAction(redirectActionName, "Todo");
 		}

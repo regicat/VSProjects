@@ -9,7 +9,6 @@ public class Todo(
 	DateTime? limitDate, 
 	bool isCompleted)
 {
-
 	public Todo(string? title, DateTime? limitDate) : this(null, title, null, limitDate, false)
 	{
 
@@ -26,7 +25,7 @@ public class Todo(
 	[MaxLength(10000)]
 	public string? Description { get; set; } = description;
 	[DataType(DataType.Date)] public DateTime? LimitDate { get; set; } = limitDate;
-	public bool IsCompleted { get; init; } = isCompleted;
+	public bool IsCompleted { get; set; } = isCompleted;
 
 
 	public override string ToString()

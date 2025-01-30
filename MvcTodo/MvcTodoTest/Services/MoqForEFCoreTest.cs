@@ -19,7 +19,7 @@ public class MoqForEFCoreTest
 		var service = new TodoService(_mock.Object);
 		var actual = service.GetById(1);
 		Assert.That(actual, Is.Not.Null);
-		Assert.That(actual, Is.EqualTo(expected));
+		Assert.That(actual, Is.EqualTo(expected).UsingPropertiesComparer());
 	}
 	[Test]
 	public void GetByIdNotFoundTest()
@@ -33,9 +33,14 @@ public class MoqForEFCoreTest
 	public void DeleteTest()
 	{
 		var expected = DataUtil.CreateDummyTodoList().Single(d => d.Id == 1);
+		_mock.Setup(x => x.Remove(It.IsAny<Todo>()))
+			.Callback<Todo>(e =>
+			{
+				Assert.That(e, Is.EqualTo(expected).UsingPropertiesComparer());
+			});
 		var service = new TodoService(_mock.Object);
 		var actual = service.Delete(1);
-		_mock.Verify(x => x.Todo.Remove(expected));
+		_mock.Verify(x => x.Todo.Remove(It.IsAny<Todo>()));
 		Assert.That(actual, Is.EqualTo(1));
 	}
 
@@ -62,14 +67,15 @@ public class MoqForEFCoreTest
 		{
 			Assert.That(actualList, Has.Length.EqualTo(2));
 			Assert.That(actualList.All(d => !d.IsCompleted));
-			Assert.That(actualList, Is.EquivalentTo(expectedList));
+			Assert.That(actualList, Is.EquivalentTo(expectedList).UsingPropertiesComparer());
 		});
 	}
 
 	[Test]
 	public void AddTest()
 	{
-		var entity = DataUtil.CreateDummyTodo() with { Id = (int?)null } ;
+		var entity = DataUtil.CreateDummyTodo();
+		entity.Id = null;
 		_mock.Setup(m => m.Add(It.IsAny<Todo>()))
 			.Callback<Todo>((e) =>
 			{
