@@ -36,14 +36,21 @@ namespace MvcTodo.Services
 
 		public int Save(Todo entity)
 		{
-			if (dbContext.Todo.Any(d => d.Id == entity.Id))
+			if (entity.Id.HasValue)
 			{
-				dbContext.Todo.Update(entity);
+				var old = GetById(entity.Id.Value);
+				if (old != null)
+				{
+					old.Title = entity.Title;
+					old.Description = entity.Description;
+					old.LimitDate = entity.LimitDate;
+					old.IsCompleted = entity.IsCompleted;
+					dbContext.Todo.Update(old);
+					return dbContext.SaveChanges();
+				}
 			}
-			else
-			{
-				dbContext.Todo.Add(entity);
-			}
+			entity.Id = null;
+			dbContext.Todo.Add(entity);
 			return dbContext.SaveChanges();
 		}
 	}

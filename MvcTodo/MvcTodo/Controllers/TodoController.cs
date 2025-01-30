@@ -87,7 +87,7 @@ namespace MvcTodo.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Save([Bind("Id,Title,LimitDate,IsCompleted")] TodoViewModel? vm)
+		public IActionResult Save([Bind("TodoId,Title,LimitDate,IsCompleted")] TodoViewModel? vm)
 		{
 
 			if (vm == null || !ModelState.IsValid)
