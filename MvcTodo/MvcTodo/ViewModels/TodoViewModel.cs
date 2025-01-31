@@ -12,8 +12,6 @@ namespace MvcTodo.ViewModels
 		[property: Required(ErrorMessage = "タイトルは必須です。")]
 		string? Title,
 
-		string? Description,
-
 		[property: DisplayName("期限")]
 		[property: BindProperty]
 		[property: DataType(DataType.Date)]

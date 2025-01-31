@@ -28,7 +28,7 @@ namespace MvcTodoTest.Controllers
 			mock.Setup(service => service.GetUnCompletedList())
 				.Returns(entityList);
 			var expectedList = entityList
-				.Select(e => new TodoViewModel(e.Id, e.Title, e.Description, e.LimitDate, e.IsCompleted))
+				.Select(e => new TodoViewModel(e.Id, e.Title, e.LimitDate, e.IsCompleted))
 				.ToList();
 
 			var controller = new TodoController(mock.Object);
@@ -57,7 +57,7 @@ namespace MvcTodoTest.Controllers
 			mock.Setup(service => service.GetAllList())
 				.Returns(entityList);
 			var expectedList = entityList
-				.Select(e => new TodoViewModel(e.Id, e.Title, e.Description, e.LimitDate, e.IsCompleted))
+				.Select(e => new TodoViewModel(e.Id, e.Title, e.LimitDate, e.IsCompleted))
 				.ToList();
 
 			var controller = new TodoController(mock.Object);
@@ -82,7 +82,7 @@ namespace MvcTodoTest.Controllers
 		{
 			var mock = new Mock<ITodoService>();
 			var todo = DataUtil.CreateDummyTodo();
-			var expected = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var expected = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted);
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
 				.Callback<int>(id =>
@@ -137,7 +137,7 @@ namespace MvcTodoTest.Controllers
 		{
 			var mock = new Mock<ITodoService>();
 			var todo = DataUtil.CreateDummyTodo();
-			var expected = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var expected = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted);
 			mock.Setup(m => m.GetById(It.IsAny<int>()))
 				.Returns(todo)
 				.Callback<int>(id =>
@@ -244,7 +244,7 @@ namespace MvcTodoTest.Controllers
 		{
 			var mock = new Mock<ITodoService>();
 			var todo = DataUtil.CreateDummyTodo();
-			var expected = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var expected = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted);
 			mock.Setup(m => m.Save(It.IsAny<Todo>()))
 				.Callback<Todo>(e =>
 				{
@@ -252,7 +252,7 @@ namespace MvcTodoTest.Controllers
 				});
 
 			var controller = new TodoController(mock.Object);
-			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var vm = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted);
 			var result = controller.Save(vm);
 			Assert.Multiple(() =>
 			{
@@ -274,7 +274,7 @@ namespace MvcTodoTest.Controllers
 			controller.ModelState.AddModelError("Title", "エラー");
 			var todo = DataUtil.CreateDummyTodo();
 			todo.Id = null;
-			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var vm = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted);
 			var result = controller.Save(vm);
 			Assert.Multiple(() =>
 			{

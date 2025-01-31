@@ -13,7 +13,7 @@ public class TodoViewModelTest
 	[Test]
 	public void ViewModelTest()
 	{
-		var actual = new TodoViewModel(1, "やること１", "", new DateTime(2025,1,1), false);
+		var actual = new TodoViewModel(1, "やること１", new DateTime(2025, 1, 1), false);
 		Assert.Multiple(() =>
 		{
 			Assert.That(TestUtil.GetDisplayName(actual, "Title"), Is.EqualTo("タイトル"));
@@ -29,7 +29,7 @@ public class TodoViewModelTest
 	public void TitleValidationTest(string? title, bool expectedErrorExists)
 	{
 		const string expectedMessage = "タイトルは必須です。";
-		var vm = new TodoViewModel(1, title, "", new DateTime(2025, 1, 31), false);
+		var vm = new TodoViewModel(1, title, new DateTime(2025, 1, 31), false);
 		var actualErrors = ValidationHelper.Validate(vm);
 		if (expectedErrorExists) 
 		{
@@ -50,7 +50,7 @@ public class TodoViewModelTest
 	public void LimitDateFutureValidationTest(LimitDateTestRecord data)
 	{
 		const string expectedMessage = "期限は本日以降の日付を指定してください。";
-		var vm = new TodoViewModel(1, "title", "", data.Value, false);
+		var vm = new TodoViewModel(1, "title", data.Value, false);
 		var actualErrors = ValidationHelper.Validate(vm);
 		if (data.IsError)
 		{

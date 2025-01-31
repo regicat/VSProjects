@@ -16,7 +16,6 @@ namespace MvcTodo.Controllers
 			var todoList = entities.Select(e => new TodoViewModel(
 				e.Id,
 				e.Title,
-				e.Description,
 				e.LimitDate,
 				e.IsCompleted
 			));
@@ -29,7 +28,6 @@ namespace MvcTodo.Controllers
 			var todoList = entities.Select(e => new TodoViewModel(
 				e.Id,
 				e.Title,
-				e.Description,
 				e.LimitDate,
 				e.IsCompleted
 			));
@@ -43,7 +41,7 @@ namespace MvcTodo.Controllers
 			{
 				return new NotFoundResult();
 			}
-			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted); 
+			var vm = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted); 
 			return View("Edit", vm);
 		}
 
@@ -55,7 +53,7 @@ namespace MvcTodo.Controllers
 			{
 				return new NotFoundResult();
 			}
-			var vm = new TodoViewModel(todo.Id, todo.Title, todo.Description, todo.LimitDate, todo.IsCompleted);
+			var vm = new TodoViewModel(todo.Id, todo.Title, todo.LimitDate, todo.IsCompleted);
 
 			return View("Show",vm);
 		}
@@ -95,7 +93,7 @@ namespace MvcTodo.Controllers
 				return View("Edit", vm);
 			}
 
-			var todo = new Todo(vm.TodoId, vm.Title, vm.Description, vm.LimitDate, vm.IsCompleted);
+			var todo = new Todo(vm.TodoId, vm.Title, null, vm.LimitDate, vm.IsCompleted);
 			todoService.Save(todo);
 			return RedirectToAction("Index", "Todo");
 		}
