@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MvcTodoV9.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MvcTodoV9Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MvcTodoV9Context") ?? throw new InvalidOperationException("Connection string 'MvcTodoV9Context' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
