@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using MvcTodoV9.ViewModels
+@model MvcTodoV9.ViewModels.TodoListViewModel;
+
+
+@{
+	ViewData["Title"] = $"Todo一覧（{Model.ListMode}）";
+	var leftButtonClass = string.Empty;
+	var rightButtonClass = string.Empty;
+	var leftHref = ViewConst.Sharp;
+	var rightHref = ViewConst.Sharp;
+
+	switch (Model.ListMode)
+	{
+		case ViewConst.ModeUncompleted:
+			leftButtonClass = ViewConst.ButtonClassSelected;
+			rightButtonClass = ViewConst.ButtonClassNotSelected;
+			rightHref = Url.Action("All", "Todo");
+			break;
+		case ViewConst.ModeAll:
+			leftButtonClass = ViewConst.ButtonClassNotSelected;
+			rightButtonClass = ViewConst.ButtonClassSelected;
+			leftHref = Url.Action("Index", "Todo");
+			break;
+	}
+
+}
+<div class="table">
+	<div class="table_top_line">
+		@switch (Model.ListMode)
+		{
+			case ViewConst.ModeUncompleted:
+				<div class="table_top_left left_tab"><a href="#" class="left_button @ViewConst.ButtonClassSelected">@ViewConst.ModeUncompleted</a></div>
+				<div class="table_top_left left_tab"><a asp-action="All" asp-controller="Todo" class="right_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeAll</a></div>
+				break;
+			case ViewConst.ModeAll:
+				<div class="table_top_left left_tab"><a asp-action="Index" asp-controller="Todo" class="left_button @ViewConst.ButtonClassNotSelected">@ViewConst.ModeUncompleted</a></div>
+				<div class="table_top_left left_tab"><a href="#" class="right_button @ViewConst.ButtonClassSelected">@ViewConst.ModeAll</a></div>
+				break;
+		}
+		<div class="table_top"><a asp-action="Add" asp-controller="Todo" class="button">@ViewConst.ModeNew</a></div>
+	</div>
+	@if (!Model.TodoList.Any())
+	{
+		<div class="table_line"><p>Todoがありません。</p></div>
+	}
+	@foreach (var todo in Model.TodoList)
+	{
+		var checkedValue = (todo.IsCompleted ? "Checked" : "NotChecked");
+		var iconUrl = Url.Content($"~/images/icon/{checkedValue}.svg");
+		<div class="table_line">
+			<div class="completed">
+				<a asp-action="Check" asp-controller="Todo" asp-route-id="@todo.TodoId" asp-route-checkValue="@(todo.IsCompleted ? "off" : "on")">
+					<img src="@iconUrl" width="32" height="32" alt="@checkedValue" />
+				</a>
+			</div>
+			<div class="title"><a asp-action="Show" asp-controller="Todo" asp-route-id="@todo.TodoId">@todo.Title</a></div>
+			<div class="limit">@todo.LimitDate</div>
+		</div>
+	}
+</div>

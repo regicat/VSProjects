@@ -67,7 +67,7 @@ namespace MvcTodo.Controllers
 
 		public IActionResult Add()
 		{
-			return View("Edit");
+			return View("Edit", new TodoViewModel(null,null,null,false));
 		}
 
 		public IActionResult Check(int? id, string? checkValue, string? listMode)

@@ -1,0 +1,44 @@
+﻿@using MvcTodoV9.ViewModels
+@model MvcTodoV9.ViewModels.TodoViewModel
+@{
+	ViewData["Title"] = $"Todo - 編集";
+}
+<div class="table">
+	<form asp-action="Save" asp-controller="Todo" method="post" name="todoForm" id="todoForm">
+		<div class="table_line">
+			<div class="table_sub_line form">
+				<div class="row_header"><label asp-for="Title"></label></div>
+				<div class="row_body">:</div>
+				<div class="row_body"><input asp-for="Title" /></div>
+			</div>
+			<div class="table_sub_line error">
+				<div class="row_header">&nbsp;</div>
+				<div class="row_body">&nbsp;</div>
+				<div class="row_body"><span asp-validation-for="Title"></span></div>
+			</div>
+			<div class="table_sub_line form">
+				<div class="row_header"><label asp-for="LimitDate"></label></div>
+				<div class="row_body">:</div>
+				<div class="row_body"><input asp-for="LimitDate" /></div>
+			</div>
+			<div class="table_sub_line error">
+				<div class="row_header">&nbsp;</div>
+				<div class="row_body">&nbsp;</div>
+				<div class="row_body"><span asp-validation-for="LimitDate"></span></div>
+			</div>
+			<div class="table_sub_line form">
+				<div class="row_header">完了</div>
+				<div class="row_body">:</div>
+				<div class="row_body"><input asp-for="IsCompleted" /></div>
+			</div>
+			<div class="table_sub_line form">
+				<div class="row_body"><a href="#" onclick="javascript:todoForm.submit()" class="button">@ViewConst.ModeSave</a></div>
+				<div class="row_body"><a href="#" class="button">@ViewConst.ModeDelete</a></div>
+			</div>
+		</div>
+		<input asp-for="TodoId"/>
+	</form>
+	<div class="table_bottom_line">
+		<div class="table_bottom"><a asp-action="Index" asp-controller="Todo" class="button">@ViewConst.ModeBack</a></div>
+	</div>
+</div>

@@ -1,0 +1,30 @@
+﻿@using MvcTodoV9.ViewModels
+@model MvcTodoV9.ViewModels.TodoViewModel
+@{
+	ViewData["Title"] = $"Todo - 表示";
+}
+<div class="table">
+	<div class="table_top_line">
+		<div class="table_top">@Html.ActionLink(ViewConst.ModeEdit, "Edit", "Todo",new RouteValueDictionary{{"id", Model.TodoId}}, new { @class="button"})</div>
+	</div>
+	<div class="table_line">
+		<div class="table_sub_line">
+			<div class="row_header">@Html.DisplayNameFor(model => model.Title)</div>
+			<div class="row_body">:</div>
+			<div class="row_body">@Html.DisplayFor(model => model.Title)</div>
+		</div>
+		<div class="table_sub_line">
+			<div class="row_header">@Html.DisplayNameFor(model => model.LimitDate)</div>
+			<div class="row_body">:</div>
+			<div class="row_body">@Html.DisplayFor(model => model.LimitDate)</div>
+		</div>
+		<div class="table_sub_line">
+			<div class="row_header">@Html.DisplayNameFor(model => model.IsCompleted)</div>
+			<div class="row_body">:</div>
+			<div class="row_body">@(Model.IsCompleted ? "完了" : "未完")</div>
+		</div>
+	</div>
+	<div class="table_top_line">
+		<div class="table_bottom">@Html.ActionLink(ViewConst.ModeBack, "Index", "Todo", null, new { @class = "button" })</div>
+	</div>
+</div>
